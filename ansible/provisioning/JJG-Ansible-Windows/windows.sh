@@ -10,11 +10,9 @@
 # @version 1.0
 #
 
-# Uncomment if behind a proxy server.
-# export {http,https,ftp}_proxy='http://username:password@proxy-host:80'
-
 ANSIBLE_PLAYBOOK=$1
 ANSIBLE_HOSTS=$2
+PROXY=$3
 TEMP_HOSTS="/tmp/ansible_hosts"
 
 if [ ! -f /vagrant/$ANSIBLE_PLAYBOOK ]; then
@@ -27,10 +25,18 @@ if [ ! -f /vagrant/$ANSIBLE_HOSTS ]; then
   exit 2
 fi
 
+# Set proxy if required.
+if [ ! -z "$3" ]; then
+  echo "Setting proxy."
+  export {http,https,ftp}_proxy=${PROXY}
+else
+  echo "No proxy required."
+fi
+
 # Install Ansible and its dependencies if it's not installed already.
 if [ ! -f /usr/bin/ansible ]; then
   echo "Installing Ansible dependencies and Git."
-  yum install -y git python python-devel
+  yum install -y git python python-devel gcc
   echo "Installing pip via easy_install."
   wget http://peak.telecommunity.com/dist/ez_setup.py
   python ez_setup.py && rm -f ez_setup.py

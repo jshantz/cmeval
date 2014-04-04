@@ -12,13 +12,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "centos-6.5-clean"
   
+  proxy_value = ENV['cmeval_proxy']
   require 'rbconfig'
   is_windows = (RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/)
   if is_windows
     # Provisioning configuration for shell script.
     config.vm.provision "shell" do |sh|
       sh.path = "provisioning/JJG-Ansible-Windows/windows.sh"
-      sh.args = "provisioning/playbook.yml provisioning/inventory"
+      sh.args = "provisioning/playbook.yml provisioning/inventory #{proxy_value}"
       # sh.args = "provisioning/playbook.yml"
     end
   else
